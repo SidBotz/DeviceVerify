@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "api/*.js", "use": "@vercel/node" },
+    { "src": "public/**", "use": "@vercel/static" }
+  ],
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/api/$1" },
+    { "src": "/verify/:userid/:url", "dest": "/public/index.html" }
+  ],
+  "env": {
+    "MONGODB_URI": "your-mongodb-connection-string"
+  }
+}
