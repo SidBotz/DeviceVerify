@@ -4,5 +4,7 @@
   "scripts": {
     "dev": "vercel dev"
   },
-  "dependencies": {}
+  "dependencies": {
+    "mongodb": "^5.0.0"
+  }
 }
