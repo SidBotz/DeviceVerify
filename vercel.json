@@ -1,11 +1,11 @@
 {
   "version": 2,
   "builds": [
-    { "src": "verify.js", "use": "@vercel/node" },
+    { "src": "redirect.js", "use": "@vercel/node" },
     { "src": "index.html", "use": "@vercel/static" }
   ],
   "routes": [
-    { "src": "/verify/(?<userid>[^/]+)/(?<url>[^/]+)", "dest": "/verify.js" },
+    { "src": "/(?<userid>[^/]+)/(?<linktype>[^/]+)/(?<redirectlink>[^/]+)", "dest": "/redirect.js" },
     { "src": "/", "dest": "index.html" }
   ]
 }
