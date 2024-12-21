@@ -1,5 +1,3 @@
-
-
 {
   "version": 2,
   "builds": [
@@ -8,9 +6,10 @@
   ],
   "routes": [
     { "src": "/api/(.*)", "dest": "/api/$1" },
-    { "src": "/verify/:userid/:url", "dest": "/public/index.html" }
+    { "src": "/verify/:userid/:url", "dest": "/index.html" },
+    { "src": "/", "dest": "/index.html" }
   ],
   "env": {
-    "MONGODB_URI": "mongodb+srv://Vivekrajroy705:k5kxIhWdFOC6lqfL@cluster0.ti2r8jt.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+    "MONGODB_URI": "your-mongodb-connection-string"
   }
 }
