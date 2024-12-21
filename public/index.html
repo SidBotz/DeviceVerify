@@ -1,54 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Device Verification</title>
-    <script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js"></script>
-    <style>
-        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
-        .status { font-size: 18px; margin-top: 20px; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deployment Test</title>
 </head>
 <body>
-    <h1>Verify Your Device</h1>
-    <p id="message">Verifying your device...</p>
-    <div id="status"></div>
-
-    <script>
-        (async () => {
-            const fp = await FingerprintJS.load();
-            const result = await fp.get();
-            const deviceId = result.visitorId;
-
-            const params = window.location.pathname.split('/').slice(2);
-            const userId = params[0];
-
-            if (!userId) {
-                document.getElementById("message").textContent = "Invalid request: User ID not provided.";
-                return;
-            }
-
-            const response = await fetch('/api/verify', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId, deviceId }),
-            });
-
-            const data = await response.json();
-            const messageEl = document.getElementById("message");
-            const statusEl = document.getElementById("status");
-
-            if (data.success) {
-                messageEl.textContent = "Verification successful!";
-                statusEl.textContent = data.message;
-                statusEl.style.color = "green";
-            } else {
-                messageEl.textContent = "Verification failed!";
-                statusEl.textContent = data.message;
-                statusEl.style.color = "red";
-            }
-        })();
-    </script>
+  <h1>Vercel Deployment Test</h1>
+  <p>If you can see this, your static site is working!</p>
 </body>
 </html>
