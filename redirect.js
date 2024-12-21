@@ -21,7 +21,7 @@ module.exports = async (req, res) => {
     console.log("Request URL:", req.url);  // Log the full request URL
     console.log("Request Query Params:", req.query);  // Log the query params
 
-    // Extract parameters
+    // Extract parameters from the URL path using the new route pattern
     const { userid, linktype, redirectlink } = req.query;
 
     // Check if parameters are missing
