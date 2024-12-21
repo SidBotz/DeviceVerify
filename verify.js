@@ -2,8 +2,7 @@ const { MongoClient } = require("mongodb");
 const crypto = require("crypto");
 
 // MongoDB configuration
-const MONGODB_URI = "mongodb+srv://Vivekrajroy705:k5kxIhWdFOC6lqfL@cluster0.ti2r8jt.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
-  "; // Replace with your MongoDB URI
+const MONGODB_URI = "mongodb+srv://vivekrajroy705:qKzW1QUZWhdZ3nTG@cluster0.djx5h.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"; // Replace with your MongoDB URI
 const DB_NAME = "device_verify";
 const COLLECTION_NAME = "devices";
 
