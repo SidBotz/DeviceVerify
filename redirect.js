@@ -18,12 +18,13 @@ async function connectToDatabase() {
 
 module.exports = async (req, res) => {
   try {
-    console.log("Request received:", req.url);
-    console.log("Query parameters:", req.query);
+    console.log("Request URL:", req.url);  // Log the full request URL
+    console.log("Request Query Params:", req.query);  // Log the query params
 
     // Extract parameters
     const { userid, linktype, redirectlink } = req.query;
 
+    // Check if parameters are missing
     if (!userid || !linktype || !redirectlink) {
       console.error("Missing parameters:", { userid, linktype, redirectlink });
       return res.status(400).json({ error: "Missing userid, linktype, or redirectlink." });
