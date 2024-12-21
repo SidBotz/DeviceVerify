@@ -18,10 +18,7 @@ async function connectToDatabase() {
 
 module.exports = async (req, res) => {
   try {
-    console.log("Request URL:", req.url);  // Log the full request URL
-    console.log("Request Query Params:", req.query);  // Log the query params
-
-    // Extract parameters from the URL path using the new route pattern
+    // Extract query parameters
     const { userid, linktype, redirectlink } = req.query;
 
     // Check if parameters are missing
