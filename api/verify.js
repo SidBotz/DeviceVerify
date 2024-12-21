@@ -1,35 +1,53 @@
-const connectToDatabase = require('../utils/db');
-const Device = require('../models/Device');
+const { MongoClient } = require("mongodb");
 
-export default async function handler(req, res) {
-    const { userId, deviceId } = req.body;
+const uri = process.env.MONGODB_URI; // MongoDB connection string
 
-    if (!userId || !deviceId) {
-        return res.status(400).json({ success: false, message: "Invalid request: Missing userId or deviceId." });
+module.exports = async (req, res) => {
+  try {
+    const { userid, url } = req.query;
+    console.log("Received Request:", { userid, url }); // Log incoming request
+
+    if (!uri) {
+      console.error("MongoDB URI is not defined in environment variables");
+      return res.status(500).json({ error: "Server configuration error" });
     }
 
-    try {
-        await connectToDatabase();
+    const client = new MongoClient(uri);
+    await client.connect();
 
-        // Check if the device is already in the database
-        const existingDevice = await Device.findOne({ deviceId });
+    const db = client.db("Cluster0");
+    const collection = db.collection("devices");
 
-        if (existingDevice) {
-            if (existingDevice.userId === userId) {
-                return res.status(200).json({ success: true, message: "Verified successfully." });
-            } else {
-                return res.status(403).json({
-                    success: false,
-                    message: "Failed to verify. One device can only be linked to one account."
-                });
-            }
-        }
+    // Check if device fingerprint already exists
+    const fingerprint = req.headers["x-device-fingerprint"]; // Pass a custom header from frontend
+    console.log("Device Fingerprint:", fingerprint);
 
-        // If the device is not in the database, add it
-        await Device.create({ deviceId, userId });
-        return res.status(200).json({ success: true, message: "Verified successfully." });
-    } catch (error) {
-        console.error("Error in verification:", error);
-        return res.status(500).json({ success: false, message: "Internal server error." });
+    if (!fingerprint) {
+      console.error("Device fingerprint not provided");
+      return res.status(400).json({ error: "Device fingerprint missing" });
     }
-}
+
+    const existingDevice = await collection.findOne({ fingerprint });
+
+    if (existingDevice) {
+      if (existingDevice.userid === userid) {
+        console.log("User verified successfully");
+        return res.status(200).json({ message: "Verified" });
+      } else {
+        console.warn("Different user trying to use the same device");
+        return res
+          .status(403)
+          .json({ error: "Failed to verify: one device, one account" });
+      }
+    }
+
+    // Add new device entry
+    await collection.insertOne({ userid, fingerprint });
+    console.log("New device registered:", { userid, fingerprint });
+
+    res.status(200).json({ message: "Verified and registered" });
+  } catch (err) {
+    console.error("Error in verify API:", err.message, err.stack);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
