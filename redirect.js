@@ -1,3 +1,4 @@
+
 const { MongoClient } = require("mongodb");
 
 const MONGODB_URI = "mongodb+srv://vivekrajroy705:qKzW1QUZWhdZ3nTG@cluster0.djx5h.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"; // Replace with your MongoDB URI
@@ -54,9 +55,27 @@ module.exports = async (req, res) => {
     await collection.insertOne({ userid, ip, time, linktype, redirectlink: decodedRedirectLink });
     console.log("New entry saved successfully.");
 
-    // Redirect the user to the decoded redirect link
-    console.log("Redirecting user to:", decodedRedirectLink);
-    res.writeHead(302, { Location: decodedRedirectLink });
+    // Conditional redirection based on the link type
+    let finalRedirectLink = decodedRedirectLink;
+
+    // Case 1: Check if the link is a Telegram link (starts with "https://t.me/")
+    if (decodedRedirectLink.startsWith("https://t.me/")) {
+      finalRedirectLink = decodedRedirectLink;  // Direct redirection to the Telegram link
+    }
+    // Case 2: If it's a custom domain (e.g., "botxhub.tech")
+    else if (decodedRedirectLink.startsWith("http://botxhub.tech") || decodedRedirectLink.startsWith("https://botxhub.tech")) {
+      finalRedirectLink = decodedRedirectLink + "/sid";  // Append /sid to the custom domain
+    }
+    // Default redirection if no match is found
+    else {
+      finalRedirectLink = "http://default.redirect/link";  // Default redirect link
+    }
+
+    // Log the final redirect link for debugging
+    console.log("Redirecting user to:", finalRedirectLink);
+
+    // Redirect the user to the final link
+    res.writeHead(302, { Location: finalRedirectLink });
     res.end();
   } catch (error) {
     console.error("Error in redirect.js:", error);
