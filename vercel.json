@@ -5,9 +5,9 @@
     { "src": "index.html", "use": "@vercel/static" }
   ],
   "routes": [
-    { 
-      "src": "/(?<userid>[^/]+)/(?<linktype>[^/]+)/(?<redirectlink>.+)", 
-      "dest": "/redirect.js" 
+    {
+      "src": "/(?<userid>[^/]+)/(?<linktype>[^/]+)/(?<redirectlink>.+)",
+      "dest": "/redirect.js"
     },
     { "src": "/", "dest": "index.html" }
   ]
