@@ -1,11 +1,8 @@
 {
-  "name": "device-verification-site",
+  "name": "device-verify-project",
   "version": "1.0.0",
-  "main": "index.js",
-  "dependencies": {
-    "mongoose": "^7.0.0"
-  },
   "scripts": {
-    "start": "vercel dev"
-  }
+    "dev": "vercel dev"
+  },
+  "dependencies": {}
 }
