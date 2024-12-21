@@ -1,5 +1,5 @@
 {
-  "name": "device-verify-project",
+  "name": "device-verify",
   "version": "1.0.0",
   "scripts": {
     "dev": "vercel dev"
