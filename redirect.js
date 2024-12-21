@@ -1,12 +1,9 @@
 const { MongoClient } = require("mongodb");
-const crypto = require("crypto");
 
-// MongoDB configuration
 const MONGODB_URI = "mongodb+srv://vivekrajroy705:qKzW1QUZWhdZ3nTG@cluster0.djx5h.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"; // Replace with your MongoDB URI
 const DB_NAME = "device_verify";
 const COLLECTION_NAME = "user_tasks";
 
-// Connect to MongoDB
 let cachedClient = null;
 async function connectToDatabase() {
   if (!cachedClient) {
@@ -25,13 +22,16 @@ module.exports = async (req, res) => {
       return res.status(400).json({ error: "Missing userid, linktype, or redirectlink." });
     }
 
+    // Decode the redirectlink
+    const decodedRedirectLink = decodeURIComponent(redirectlink);
+
     const db = await connectToDatabase();
     const collection = db.collection(COLLECTION_NAME);
 
     const ip = req.headers["x-forwarded-for"] || req.connection.remoteAddress || "unknown";
     const time = new Date().toISOString();
 
-    // Check if the IP has already completed this linktype
+    // Check if the IP and linktype exist in the database
     const existingEntry = await collection.findOne({ ip, linktype });
     if (existingEntry) {
       return res.status(403).json({
@@ -41,10 +41,10 @@ module.exports = async (req, res) => {
     }
 
     // Save user details to the database
-    await collection.insertOne({ userid, ip, time, linktype, redirectlink });
+    await collection.insertOne({ userid, ip, time, linktype, redirectlink: decodedRedirectLink });
 
-    // Redirect the user to the redirect link
-    res.writeHead(302, { Location: redirectlink });
+    // Redirect to the decoded redirect link
+    res.writeHead(302, { Location: decodedRedirectLink });
     res.end();
   } catch (error) {
     console.error("Error in redirect.js:", error);
