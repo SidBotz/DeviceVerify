@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Verification</title>
+    <link rel="stylesheet" href="verify-style.css">
+    <script defer src="verify.js"></script>
+</head>
+<body>
+    <div class="verify-container">
+        <div class="verify-header">
+            <h1>Task Verification</h1>
+            <p>Verifying your data. Please wait...</p>
+        </div>
+        <div class="verify-content">
+            <div class="message" id="verificationMessage">
+                <p>You can earn money with us! But if you try to cheat or engage in suspicious activity, we may disable your withdrawal feature. Please be honest during this process!</p>
+            </div>
+            <div class="animation" id="animation">
+                <img src="https://media.giphy.com/media/7gkqH9UIfgH2c/giphy.gif" alt="Verifying..." />
+            </div>
+            <div id="verificationStatus" class="status"></div>
+            <div id="redirectLink" class="redirect">
+                <!-- This will show when the task is verified or completed -->
+            </div>
+        </div>
+    </div>
+</body>
+</html>
