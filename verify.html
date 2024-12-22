@@ -1,69 +1,73 @@
-<script>
-    window.onload = async function () {
-        const params = new URLSearchParams(window.location.search);
-        const userid = params.get("userid");
-        const linktype = params.get("linktype");
-        const redirectlink = decodeURIComponent(params.get("redirectlink"));
-
-        const verificationMessage = document.getElementById("verificationMessage");
-        const animation = document.getElementById("animation");
-        const verificationStatus = document.getElementById("verificationStatus");
-        const redirectLink = document.getElementById("redirectLink");
-
-        // Validate query parameters
-        if (!userid || !linktype || !redirectlink) {
-            verificationStatus.textContent = "Missing required parameters!";
-            verificationMessage.textContent = "Please check the link and try again.";
-            return;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Verification</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #f8fafc, #e8edf1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
         }
 
-        // Display loading animation
-        animation.style.display = "block";
-
-        try {
-            // Fetch task status from your backend
-            const response = await fetch(`/api/verify`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ userid, linktype }),
-            });
-
-            const data = await response.json();
-
-            // Hide animation
-            animation.style.display = "none";
-
-            if (response.ok) {
-                const taskCompletedTime = data.taskCompletedTime; // Timestamp from server
-                const currentTime = new Date().getTime();
-                const elapsedTime = (currentTime - taskCompletedTime) / (1000 * 60 * 60); // in hours
-
-                if (elapsedTime > 6) {
-                    // Task is verified and enough time has passed
-                    verificationStatus.textContent = "Task verified successfully!";
-                    verificationMessage.textContent = "You can now proceed to your task link.";
-                    setTimeout(() => {
-                        window.location.href = redirectlink;
-                    }, 2000);
-                } else {
-                    // Task is verified, but insufficient time has passed
-                    const remainingTime = 6 - elapsedTime;
-                    verificationStatus.textContent = `You have already completed this task, but you need to wait ${Math.ceil(remainingTime)} hours before doing it again.`;
-                    redirectLink.innerHTML = `<a href="https://t.me/PaisaEarnBot/tasks" target="_blank">Click here for another task</a>`;
-                }
-            } else {
-                // If task is not verified or an error occurred
-                verificationStatus.textContent = data.message || "Task verification failed!";
-                verificationMessage.textContent = "Please check your task or try again later.";
-            }
-        } catch (error) {
-            // Handle any unexpected errors
-            animation.style.display = "none";
-            verificationStatus.textContent = "An error occurred!";
-            verificationMessage.textContent = "Please try again later.";
-            console.error("Error verifying task:", error);
+        .verification-container {
+            max-width: 400px;
+            text-align: center;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin: 20px;
         }
-    };
-</script>
+
+        .status {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .message {
+            font-size: 1rem;
+            color: #555;
+            margin: 10px 0 20px;
+        }
+
+        .action-link {
+            text-decoration: none;
+            font-weight: bold;
+            color: #ffffff;
+            background-color: #007bff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .action-link:hover {
+            background-color: #0056b3;
+        }
+
+        .icon {
+            font-size: 3rem;
+            color: #f44336;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="verification-container">
+        <div id="statusIcon" class="icon">⚠️</div>
+        <div id="verificationStatus" class="status">Task Failed</div>
+        <div id="verificationMessage" class="message">
+            You have already completed this task. Try another task or use a different device.
+        </div>
+        <a href="https://t.me/PaisaEarnBot/tasks" class="action-link">Explore More Tasks</a>
+    </div>
+</body>
+</html>
