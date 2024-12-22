@@ -1,30 +1,69 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Verification</title>
-    <link rel="stylesheet" href="verify-style.css">
-    <script defer src="verify.js"></script>
-</head>
-<body>
-    <div class="verify-container">
-        <div class="verify-header">
-            <h1>Task Verification</h1>
-            <p>Verifying your data. Please wait...</p>
-        </div>
-        <div class="verify-content">
-            <div class="message" id="verificationMessage">
-                <p>You can earn money with us! But if you try to cheat or engage in suspicious activity, we may disable your withdrawal feature. Please be honest during this process!</p>
-            </div>
-            <div class="animation" id="animation">
-                <img src="https://media.giphy.com/media/7gkqH9UIfgH2c/giphy.gif" alt="Verifying..." />
-            </div>
-            <div id="verificationStatus" class="status"></div>
-            <div id="redirectLink" class="redirect">
-                <!-- This will show when the task is verified or completed -->
-            </div>
-        </div>
-    </div>
-</body>
-</html>
+<script>
+    window.onload = async function () {
+        const params = new URLSearchParams(window.location.search);
+        const userid = params.get("userid");
+        const linktype = params.get("linktype");
+        const redirectlink = decodeURIComponent(params.get("redirectlink"));
+
+        const verificationMessage = document.getElementById("verificationMessage");
+        const animation = document.getElementById("animation");
+        const verificationStatus = document.getElementById("verificationStatus");
+        const redirectLink = document.getElementById("redirectLink");
+
+        // Validate query parameters
+        if (!userid || !linktype || !redirectlink) {
+            verificationStatus.textContent = "Missing required parameters!";
+            verificationMessage.textContent = "Please check the link and try again.";
+            return;
+        }
+
+        // Display loading animation
+        animation.style.display = "block";
+
+        try {
+            // Fetch task status from your backend
+            const response = await fetch(`/api/verify`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ userid, linktype }),
+            });
+
+            const data = await response.json();
+
+            // Hide animation
+            animation.style.display = "none";
+
+            if (response.ok) {
+                const taskCompletedTime = data.taskCompletedTime; // Timestamp from server
+                const currentTime = new Date().getTime();
+                const elapsedTime = (currentTime - taskCompletedTime) / (1000 * 60 * 60); // in hours
+
+                if (elapsedTime > 6) {
+                    // Task is verified and enough time has passed
+                    verificationStatus.textContent = "Task verified successfully!";
+                    verificationMessage.textContent = "You can now proceed to your task link.";
+                    setTimeout(() => {
+                        window.location.href = redirectlink;
+                    }, 2000);
+                } else {
+                    // Task is verified, but insufficient time has passed
+                    const remainingTime = 6 - elapsedTime;
+                    verificationStatus.textContent = `You have already completed this task, but you need to wait ${Math.ceil(remainingTime)} hours before doing it again.`;
+                    redirectLink.innerHTML = `<a href="https://t.me/PaisaEarnBot/tasks" target="_blank">Click here for another task</a>`;
+                }
+            } else {
+                // If task is not verified or an error occurred
+                verificationStatus.textContent = data.message || "Task verification failed!";
+                verificationMessage.textContent = "Please check your task or try again later.";
+            }
+        } catch (error) {
+            // Handle any unexpected errors
+            animation.style.display = "none";
+            verificationStatus.textContent = "An error occurred!";
+            verificationMessage.textContent = "Please try again later.";
+            console.error("Error verifying task:", error);
+        }
+    };
+</script>
